@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+#Best school print
 
 for (( i=0; i<10; i++ )) 
 do
