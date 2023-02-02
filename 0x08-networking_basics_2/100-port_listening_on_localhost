@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+# on localhost list all 98 port.
+
+nc -l localhost 98
