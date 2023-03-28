@@ -7,7 +7,7 @@ if [ $? -eq 0 ]
 then
     echo -e \
 "http {
-    root /var/www/school;
+    root /var/www/web-01;
     index index.html;
     server {
         listen 80;
