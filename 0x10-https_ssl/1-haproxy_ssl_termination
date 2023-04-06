@@ -48,6 +48,6 @@ frontend  aysuarex.tech-https-frontend
 
 backend aysuarex.tech-backend
         balance roundrobin
-        server 107965-web-01 52.91.132.17.159:80 check
+        server 107965-web-01 52.91.132.17:80 check
         server 107965-web-02 34.224.63.71:80 check
 # end of parameters
