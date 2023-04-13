@@ -33,6 +33,18 @@ defaults
         errorfile 503 /etc/haproxy/errors/503.http
         errorfile 504 /etc/haproxy/errors/504.http
 
+#--beta-scribbles.tech-params-begin--
+backend beta-scribbles.tech-backend
+        balance roundrobin
+        server 107965-web-01 52.91.132.17:80 check
+        server 107965-web-02 334.224.63.71:80 check
+frontend beta-scribbles.tech-frontend
+        bind *:80
+        mode http
+        default_backend beta-scribbles.tech-backend
+#--beta-scribbles.tech-params-end--
+
+
 #--webdagi.tech-params-begin--
 backend webdagi.tech-backend
         balance roundrobin
