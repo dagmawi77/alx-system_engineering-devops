@@ -1,52 +1,46 @@
 #!/usr/bin/python3
-"""recursive function that queries the Reddit API,
-   """
-"""
-Defines a function that queries Reddit API
-"""
+""" Module for a function that queries the Reddit API recursively."""
+
+
 import requests
-from sys import argv
-after = None
-count_dic = []
 
 
-def count_words(subreddit, word_list):
-    """function queries reddit api"""
-    global after
-    global count_dic
-    headers = {'User-Agent': 'xica369'}
-    URL = "https://www.reddit.com/r/{}/hot.json".format(subreddit)
-    parameters = {'after': after}
-    response = requests.get(URL, headers=headers, allow_redirects=False,
-                            params=parameters)
-def count_words(subreddit, word_list, after=None, sort=True):
+def count_words(subreddit, word_list, after='', word_dict={}):
+    """ A function that queries the Reddit API.
     """
-    Queries the Reddit API, parses the title of all hot articles.
-    """
-    url = 'https://www.reddit.com/r/{}/hot.json'.format(subreddit)
-    params = {'after': after, 'limit': 100}
-    headers = {'User-Agent': 'advanced-api/0.0.1 by Mendy'}
-    req = requests.get(url=url,
-                       params=params, headers=headers, allow_redirects=False)
-    if req.status_code == 200:
-        response = req.json()
-        titles = [child['data']['title']
-                  for child in response['data']['children']]
-        after = response['data']['after']
-        if after is not None:
-            titles += count_words(subreddit,
-                                  word_list, after=after, sort=False)
-        if sort is True:
-            count = {k.lower(): 0 for k in word_list}
-            for title in titles:
-                count = {k: v + title.lower().split().count(k)
-                         for k, v in count.items()}
-            count = {k: v for k, v in count.items() if v > 0}
-            if len(count):
-                word_list = [w.lower() for w in word_list]
-                count = {k: v * word_list.count(k)
-                         for k, v in count.items()}
-                count = sorted(count.items(), key=lambda kv: (-kv[1], kv[0]))
-                [print("{}: {}".format(k, v)) for k, v in count]
-        else:
-            return titles
+
+    if not word_dict:
+        for word in word_list:
+            if word.lower() not in word_dict:
+                word_dict[word.lower()] = 0
+
+    if after is None:
+        wordict = sorted(word_dict.items(), key=lambda x: (-x[1], x[0]))
+        for word in wordict:
+            if word[1]:
+                print('{}: {}'.format(word[0], word[1]))
+        return None
+
+    url = 'https://www.reddit.com/r/{}/hot/.json'.format(subreddit)
+    header = {'user-agent': 'redquery'}
+    parameters = {'limit': 100, 'after': after}
+    response = requests.get(url, headers=header, params=parameters,
+                            allow_redirects=False)
+
+    if response.status_code != 200:
+        return None
+
+    try:
+        hot = response.json()['data']['children']
+        aft = response.json()['data']['after']
+        for post in hot:
+            title = post['data']['title']
+            lower = [word.lower() for word in title.split(' ')]
+
+            for word in word_dict.keys():
+                word_dict[word] += lower.count(word)
+
+    except Exception:
+        return None
+
+    count_words(subreddit, word_list, aft, word_dict)
